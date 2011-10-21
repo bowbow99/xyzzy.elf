@@ -63,7 +63,7 @@
 
 (defun default-lighter-string (name)
   (let ((name (if (string-match "\\(.+\\)-mode$" (string name))
-                (match-string 0)
+                (match-string 1)
                 (string name))))
     (format nil "~:(~A~)" name)))
 
