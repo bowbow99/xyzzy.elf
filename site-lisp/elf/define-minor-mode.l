@@ -91,21 +91,22 @@
                     (keymapp command)))))))
 
 (defun make-keymap-def-form (var key-bindings name)
-  `(progn
-     (defvar ,var nil ,(format nil "マイナーモード ~A で使用するキーマップ" name))
-     (unless ,var
-       (let ((bindings ,key-bindings))
-         (cond ((keymapp bindings)
-                (setf ,var bindings))
-               ((key-binding-list-p bindings)
-                (let ((keymap (make-sparse-keymap)))
-                  (dolist (key+cmd bindings)
-                    (define-key keymap (car key+cmd) (cdr key+cmd)))
-                  (setf ,var keymap)))
-               (t
-                (error 'type-error :datum bindings
-                       :expected-type '(or keymap key-binding-alist)))
-               )))))
+  (with-gensyms ($bindings $keymap $key+cmd)
+    `(progn
+       (defvar ,var nil ,(format nil "マイナーモード ~A で使用するキーマップ" name))
+       (unless ,var
+         (let ((,$bindings ,key-bindings))
+           (cond ((keymapp ,$bindings)
+                  (setf ,var ,$bindings))
+                 ((key-binding-list-p ,$bindings)
+                  (let ((,$keymap (make-sparse-keymap)))
+                    (dolist (,$key+cmd ,$bindings)
+                      (define-key ,$keymap (car ,$key+cmd) (cdr ,$key+cmd)))
+                    (setf ,var ,$keymap)))
+                 (t
+                  (error 'type-error :datum ,$bindings
+                         :expected-type '(or keymap key-binding-alist)))
+                 ))))))
 
 (defun get-keymap-var/def-form (name options)
   (let ((keymap (getf options :keymap nil)))
