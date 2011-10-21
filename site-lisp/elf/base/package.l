@@ -1,0 +1,15 @@
+;;; -*- mode: lisp -*-
+;;;
+;;; elf/base/package.l
+;;;
+;;; Author:    bowbow99  <bowbow99@gmail.com>
+;;; License:   MIT (See COPYING.mit)
+;;;
+;;; This file is part of xyzzy extension "elf".
+
+;;; Code:
+
+(defpackage :elf)
+
+(provide "elf/base/package")
+;;; elf/base/package.l ends here.

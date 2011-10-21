@@ -1,14 +1,17 @@
 ;;; -*- mode: lisp; -*-
 ;;;
-;;; elf.l --- DESCRIPTION
+;;; elf.l --- Emacs Lisp Features
 ;;;
 ;;; Author:     bowbow99  <bowbow99@gmail.com>
 ;;; Version:    0.00.00
-;;; Category:
+;;; Category:   Lisp Libraries
 ;;; License:    MIT (see COPYING.mit)
 ;;; Commentary: (see README.md)
 ;;; ChangeLog:  (see ChangeLog)
 
 ;;; Code:
 
+(require "elf/define-minor-mode")
+
+(provide "elf")
 ;;; elf.l ends here.
