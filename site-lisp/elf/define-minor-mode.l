@@ -119,7 +119,7 @@
        (values keymap nil))
       (list
        (let* ((var  (make-keymap-variable name options))
-              (form (make-keymap-def-form var keymap)))
+              (form (make-keymap-def-form var keymap name)))
          (values var form))))))
 
 ;;;;; hook?
