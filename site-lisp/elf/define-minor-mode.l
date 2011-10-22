@@ -113,9 +113,8 @@
     (etypecase keymap
       ((eql nil) (values nil nil))
       (symbol
-       (when (or (constantp keymap)
-                 (not (si:*specialp keymap)))
-         (warn "その変数ほんとにキーマップ？: ~S" keymap))
+       (when (constantp keymap)
+         (warn "その定数ほんとにキーマップ？: ~S" keymap))
        (values keymap nil))
       (list
        (let* ((var  (make-keymap-variable name options))
