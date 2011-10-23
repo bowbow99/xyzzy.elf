@@ -88,6 +88,7 @@
 
 (export '(string-designator
           list-of
+          callable
           ))
 
 (deftype string-designator ()
@@ -107,6 +108,10 @@
 (deftype list-of (&optional element-type)
   (cond ((eql element-type '*) 'list)
         (t `(and list (satisfies ,(get-list-element-predicate element-type))))))
+
+(deftype callable ()
+  `(or function
+       (and symbol (satisfies fboundp))))
 
 
 ;;;; binding macros
