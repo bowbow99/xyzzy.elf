@@ -203,7 +203,7 @@ INTERVAL ‚ª integer ‚© float ‚Å‚ ‚ê‚ÎAÅ‰‚ÌÀsŒã INTERVAL •b‚²‚Æ‚ÉŒJ‚è•Ô‚µ
     (cancel-timer *pre-idle-hook-timer*)
     (setf *pre-idle-hook-timer*)))
 
-(add-hook '*pre-command-hok* 'cancel-idle-hooks)
+(add-hook '*pre-command-hook* 'cancel-idle-hooks)
 
 
 (provide "elf/timer")
