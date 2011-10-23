@@ -183,13 +183,14 @@ INTERVAL が integer か float であれば、最初の実行後 INTERVAL 秒ごとに繰り返し
 (defvar *pre-idle-hook* nil
   "一定時間操作しなかった時に実行されるフック")
 
-(defvar *pre-idle-hook-delay* 1
+(defvar *pre-idle-hook-delay* 0.3
   "最後に操作してから何秒後に *pre-idle-hook* を実行するか")
 
 (defparameter *pre-idle-hook-timer* nil)
 
 ;; @post-command-hook
 (defun run-idle-hooks ()
+  (cancel-idle-hooks)
   (when *pre-idle-hook*
     (setf *pre-idle-hook-timer*
           (run-with-timer *pre-idle-hook-delay* nil
