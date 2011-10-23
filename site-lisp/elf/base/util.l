@@ -126,25 +126,21 @@
      ,@body))
 (set-indent 'with-gensyms 1)
 
-(defun structure-slot-value (object slot)
-  (si:*slot-value object slot))
-
-(require "compile")
-
-(setf (get 'structure-slot-value 'compiler::optimize-form)
-      (lambda (form) `(si:*slot-value ,@(cdr form))))
-
-(defsetf structure-slot-value si:*set-slot-value)
-
 (defmacro with-struct ((struct &rest slots) object &body body)
-  `(let ((,struct ,object))
-     (symbol-macrolet
-         (,@(loop for slot in slots
-              collect (etypecase slot
-                        (symbol `(,slot (structure-slot-value ,struct ,(kwd slot))))
-                        (cons   `(,(car slot)
-                                  (structure-slot-value ,struct ,(kwd (second slot))))))))
-       ,@body)))
+  (let ((package (symbol-package struct)))
+    (labels ((acc (slot)
+               (let ((name (format nil "~A-~A" struct slot)))
+                 (or (find-symbol name package)
+                     (error "with-struct - accessor `~A' not found in package ~S"
+                            name package)))))
+      `(let ((,struct ,object))
+         (symbol-macrolet
+             (,@(loop for slot in slots
+                  collect (etypecase slot
+                            (symbol `(,slot (,(acc slot) ,struct)))
+                            (cons   `(,(car slot) (,(acc (cdr slot)) ,struct))))))
+           ,@body)))))
+
 (set-indent 'with-struct 2)
 
 
