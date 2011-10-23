@@ -12,6 +12,7 @@
 ;;; Code:
 
 (require "elf/define-minor-mode")
+(require "elf/timer")
 
 (provide "elf")
 ;;; elf.l ends here.
