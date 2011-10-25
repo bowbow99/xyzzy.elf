@@ -1,6 +1,6 @@
-;;; -*- mode: lisp; package: elf/customize -*-
+;;; -*- mode: lisp; package: elf/customization -*-
 ;;;
-;;; elf/customize.l
+;;; elf/customization.l
 ;;;
 ;;; Author:    bowbow99  <bowbow99@gmail.com>
 ;;; License:   MIT (See COPYING.mit)
@@ -14,10 +14,10 @@
 
 #+elf/reset
 (progn
-  (when (find-package :elf/customize)
-    (delete-package :elf/customize)))
+  (when (find-package :elf/customization)
+    (delete-package :elf/customization)))
 
-(elf.util:namespace :elf/customize
+(elf.util:namespace :elf/customization
   (:use :lisp :editor :elf.util)
   (:shadowing-import-from :ansi-loop
     #:loop #:loop-finish)
@@ -223,5 +223,5 @@
 (set-indent 'defcustom-local 2)
 
 
-(provide "elf/customize")
-;;; elf/customize.l ends here.
+(provide "elf/customization")
+;;; elf/customization.l ends here.
