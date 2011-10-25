@@ -94,6 +94,10 @@
   group)
 
 (defun expand-defgroup (name members description options)
+  #+elf/safety (check-type name symbol)
+  #+elf/safety (check-type members (list-of symbol))
+  #+elf/safety (check-type description string)
+  #+elf/safety (check-type options (plist keyword))
   (let ((name (string name)))
     (with-gensyms ($group $x)
       `(let ((,$group (make-customize-group :name ,name
@@ -128,7 +132,7 @@
   DESCRIPTION - 文字列（評価されません）
       グループの説明を書いておきます。
 
-  :group GROUP - グループ名（評価されます）
+  :group GROUP - シンボルか文字列（評価されます）
       新たに定義するグループが所属する親グループを指定します。
       親グループは先に定義されている必要があります。
       :group を複数指定することで複数の親グループに属するグループを作る
@@ -140,13 +144,8 @@
       事をするつもりだった（けどしてない）ようですが、xyzzy/elf では今の
       ところ使用していません。
 "
-  #+elf/safety (check-type name symbol)
-  #+elf/safety (check-type members (list-of symbol))
-  #+elf/safety (check-type description string)
-  #+elf/safety (check-type options (plist keyword))
   (expand-defgroup name members description options))
-
-
+(set-indent 'defgroup 2)
 
 (provide "elf/customize")
 ;;; elf/customize.l ends here.
