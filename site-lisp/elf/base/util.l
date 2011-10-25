@@ -109,6 +109,41 @@
   (cond ((eql element-type '*) 'list)
         (t `(and list (satisfies ,(get-list-element-predicate element-type))))))
 
+(deftype proper-list ()
+  `(and list (satisfies ansify.util:proper-list-p)))
+
+(defun make-plist-key/value-predicate-function (key-type value-type)
+  (let ((key-expr   (ansify.ext:optimize-type-check 'k key-type))
+        (value-expr (ansify.ext:optimize-type-check 'v value-type)))
+    (coerce `(lambda (list)
+               (and (evenp (length list))
+                    (do* ((r list (cddr r)))
+                        ((null r) t)
+                      (when (null (cdr r)) (return nil))
+                      (let ((k (first r))
+                            (v (second r)))
+                        (unless (and ,key-expr
+                                     ,value-expr)
+                          (return nil))))))
+            'function)))
+
+(let ((cache (make-hash-table :test 'equal)))
+  (setf (gethash '(* . *) cache)
+        (let ((sym (gensym* "(plist * *)")))
+          (setf (symbol-function sym)
+                (lambda (list) (evenp (length list))))))
+  (defun get-plist-key/value-predicate (key-type value-type)
+    (let ((key (cons key-type value-type)))
+      (or (gethash key cache)
+          (let ((sym (gensym* "(plist ~S ~S)" key-type value-type))
+                (fn  (make-plist-key/value-predicate-function key-type value-type)))
+            (setf (symbol-function sym) fn
+                  (gethash key cache) sym))))))
+
+(deftype plist (&optional key-type value-type)
+  `(and proper-list
+        (satisfies ,(get-plist-key/value-predicate key-type value-type))))
+
 (deftype callable ()
   `(or function
        (and symbol (satisfies fboundp))))
