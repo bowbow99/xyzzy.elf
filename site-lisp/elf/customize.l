@@ -147,5 +147,81 @@
   (expand-defgroup name members description options))
 (set-indent 'defgroup 2)
 
+
+;;;; customize option types
+;;
+;; Customize option type describes a) type of value acceptable for the
+;; option, and b) UI (widget) for modifying the value of the option on
+;; customization buffer.
+;;
+
+
+;;;; customize variable (option)
+
+(defstruct (customize-variable)
+  symbol
+  description
+  default-form
+  type
+  options
+  buffer-local-p)
+
+(defun expand-defcustom (name default description options local-p)
+  #+elf/safety (check-type name symbol)
+  #+elf/safety (check-type description string)
+  #+elf/safety (check-type options (plist keyword))
+  (unless (find-key-option options :group)
+    (warn "グループが指定されていません: (~S ~S...)"
+          (if local-p 'defcustom-local 'defcustom) name))
+  (with-gensyms ($def $x)
+    `(let ((,$def (make-customize-group
+                   :symbol ',name :default-form ',default
+                   :description ',description :buffer-local-p ',(not (not local-p)))))
+       ,@(loop for (key form) on options by #'cddr
+           collect (case key
+                     (:group `(customize-group-add-member ,form ',name))
+                     (:type `(setf (customize-variable-type ,$def) ,form))
+                     (:options `(dolist (,$x ,form)
+                                  (pushnew ,$x (customize-variable-options ,$def))))))
+       (setf (get ',name 'ed::customize-variable-definition) ,$def)
+       (,(if local-p 'defvar-local 'defvar) ,name ,default ,description))))
+
+
+(defmacro defcustom (name default description &rest options)
+  "カスタマイズ変数を定義します。
+
+（Emacs では M-x customize で起動するカスタマイズバッファで GUI っぽく
+設定できたりしますが、今のところそんなもの無いのでおまけ付き defvar な
+感じです。）
+
+引数:
+
+  NAME - シンボル（評価されません）
+      カスタマイズ変数のシンボルを指定します。
+
+  DEFAULT - 任意の式（必要に応じて評価されます）
+      カスタマイズ変数の初期値を返す式を指定します。
+
+  DESCRIPTION - 文字列（評価されません）
+      カスタマイズ変数の説明を書いておきます。
+
+  :group GROUP - シンボルか文字列（評価されます）
+      カスタマイズ変数が属するグループを指定します。
+
+  :type CUSTOMIZE-TYPE - ？？？（評価されます）
+      この変数に設定できる値のタイプを指定します。
+      ※ここでタイプと呼んでいるのはカスタマイズ変数の値専用のタイプで
+      typep などで指定する lisp の型指定子とは別物です。
+"
+  (expand-defcustom name default description options nil))
+(set-indent 'defcustom 2)
+
+(defmacro defcustom-local (name default description &rest options)
+  "バッファ・ローカルなカスタマイズ変数を定義します。
+詳しくは defcustom 参照。"
+  (expand-defcustom name default description options t))
+(set-indent 'defcustom-local 2)
+
+
 (provide "elf/customize")
 ;;; elf/customize.l ends here.
