@@ -89,6 +89,8 @@
 (export '(string-designator
           list-of
           callable
+          proper-list
+          plist
           ))
 
 (deftype string-designator ()
