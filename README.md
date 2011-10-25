@@ -1,5 +1,8 @@
+Emacs Lisp Features
+
 これは何
 ========
+Emacs Lisp にある便利そうな機能を xyzzy lisp で使えるようにしたい。
 
 インストール
 ============
@@ -12,9 +15,24 @@ NetInstaller から
 
 設定
 ====
+今のところ無いような気がします。
 
 使い方
 ======
+とりあえず読み込みます。
+
+    (require "elf")
+
+ドキュメントとかまだ何もないので後はソース見てください。各ファイルで `elf-export`
+しているシンボルはパッケージ elf から export されているので、
+
+    (defpackage :my-package
+      (:use :lisp :editor)
+      (:import-from :elf
+        #:defgroup #:defcustom #:with-current-buffer ...))
+
+とかそんな感じで。
+
 
 注意点、既知の問題など
 ======================
