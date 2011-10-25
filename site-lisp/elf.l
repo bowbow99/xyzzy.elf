@@ -13,6 +13,8 @@
 
 (require "elf/define-minor-mode")
 (require "elf/timer")
+(require "elf/buffer")
+(require "elf/window")
 
 (provide "elf")
 ;;; elf.l ends here.
