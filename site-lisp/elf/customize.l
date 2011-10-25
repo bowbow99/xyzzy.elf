@@ -64,7 +64,8 @@
   `(and customize-group (satisfies proper-customize-group-p)))
 
 (defun customize-group-add-member (group new-member)
-  (with-struct (customize-group members) (find-customize-group group)
+  (with-struct (customize-group members)
+      (find-customize-group-or-error group)
     (unless (member new-member members)
       (push new-member members))
     members))
@@ -79,6 +80,10 @@
     (string-designator
      (find (string name) *customize-group-list*
            :key #'customize-group-name :test #'string=))))
+
+(defun find-customize-group-or-error (name)
+  (or (find-customize-group name)
+      (error "カスタマイズグループが見つかりません: ~S" name)))
 
 (defun register-customize-group (group)
   #+elf/safety (check-type group proper-customize-group)
