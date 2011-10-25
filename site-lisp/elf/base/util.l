@@ -100,10 +100,10 @@
 
 (defun get-list-element-predicate (element-type)
   (or (gethash element-type *list-element-predicate-table*)
-      (let ((expr (ansify.ext:optimize-type-check 'x element-type))
-            (fn   (coerce `(lambda (list) (every (lambda (x) ,expr) list))
-                          'function))
-            (pred (gensym* "(list-of ~S)" element-type)))
+      (let* ((expr (ansify.ext:optimize-type-check 'x element-type))
+             (fn   (coerce `(lambda (list) (every (lambda (x) ,expr) list))
+                           'function))
+             (pred (gensym* "(list-of ~S)" element-type)))
         (setf (symbol-function pred) fn
               (gethash element-type *list-element-predicate-table*) pred))))
 
