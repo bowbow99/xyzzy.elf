@@ -37,7 +37,7 @@
   (intern (apply #'format nil name args) :keyword))
 
 (defun gensym* (name &rest args)
-  (gensym (apply format nil name args)))
+  (gensym (apply #'format nil name args)))
 
 
 ;;;; namespace (a.k.a. one-package-per-one-file)
