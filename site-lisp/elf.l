@@ -16,5 +16,7 @@
 (require "elf/buffer")
 (require "elf/window")
 
+(require "elf/customization")
+
 (provide "elf")
 ;;; elf.l ends here.
