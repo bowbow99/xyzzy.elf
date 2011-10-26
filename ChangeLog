@@ -1,2 +1,17 @@
+2011-10-2x  bowbow99  <bowbow99@gmail.com>
+
+	* いろいろ実装してた
+	- with-current-buffer
+	- with-temp-buffer
+	- walk-windows
+	- define-minor-mode
+	- run-with-timer
+	- cancel-timer
+	- *active-timer-list*
+	- *pre-idle-hook*
+	- defgroup
+	- defcustom
+	- defcustom-local
+
 2011-10-21  bowbow99  <bowbow99@gmail.com>
 	* 始めました
