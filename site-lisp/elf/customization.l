@@ -90,7 +90,7 @@
   (setf *customize-group-list*
         (cons group
               (remove (customize-group-name group) *customize-group-list*
-                      :test 'string=)))
+                      :key #'customize-group-name :test 'string=)))
   group)
 
 (defun expand-defgroup (name members description options)
