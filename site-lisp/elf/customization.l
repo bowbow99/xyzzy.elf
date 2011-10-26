@@ -147,6 +147,87 @@
   (expand-defgroup name members description options))
 (set-indent 'defgroup 2)
 
+;;;;; bootstrapping built-in groups
+
+(unless *customize-group-list*
+  (setf *customize-group-list*
+        (list (make-customize-group
+               :name "xyzzy" :description "テキストエディタのような謎のもの")))
+
+  ;; NOTE: built-in groups  - copied from Emacs
+  ;; I just copied from my Emacs's toplevel groups and formatted. Some (or most)
+  ;; of them are irrelevant or unnecessary for xyzzy.
+
+  (defgroup editing ()
+    "Basic text editing facilities."
+    :group 'xyzzy)
+
+  (defgroup external ()
+    "Interfacing to external utilities."
+    :group 'xyzzy)
+
+  (defgroup convenience ()
+    "Convenience features for faster editing."
+    :group 'xyzzy)
+
+  (defgroup programming ()
+    "Support for programming in other languages."
+    :group 'xyzzy)
+
+  (defgroup applications ()
+    "Applications written in Emacs."
+    :group 'xyzzy)
+
+  (defgroup development ()
+    "Support for further development of Emacs."
+    :group 'xyzzy)
+
+  (defgroup environment ()
+    "Fitting Emacs with its environment."
+    :group 'xyzzy)
+
+  (defgroup data ()
+    "Support for editing files of data."
+    :group 'xyzzy)
+
+  (defgroup files ()
+    "Support for editing files."
+    :group 'xyzzy)
+
+  (defgroup wp ()
+    "Word processing."
+    :group 'xyzzy)
+
+  (defgroup faces ()
+    "Support for multiple fonts."
+    :group 'xyzzy)
+
+  (defgroup hypermedia ()
+    "Support for links between text or other media types."
+    :group 'xyzzy)
+
+  (defgroup help ()
+    "Support for on-line help systems."
+    :group 'xyzzy)
+
+  (defgroup multimedia ()
+    "Non-textual support, specifically images and sound."
+    :group 'xyzzy)
+
+  (defgroup local ()
+    "Code local to your site."
+    :group 'xyzzy)
+
+  (defgroup epg ()
+    "The EasyPG library."
+    :group 'xyzzy)
+
+  (defgroup postscript ()
+    "PostScript Group."
+    :group 'xyzzy)
+
+  )
+
 
 ;;;; customize option types
 ;;
