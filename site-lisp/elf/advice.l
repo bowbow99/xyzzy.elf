@@ -245,11 +245,13 @@ CAUTION: This fnuction is destructive."
 
 ;;;; Macro defadvice
 
-(defun gen-make-advice-form (name arglist body &key enabled)
-  `(make-advice ',name (lambda ,(cond ((undefinedp arglist) nil)
-                                      (t arglist))
-                         ,@body)
-                :enabled ,enabled :arglist ',arglist))
+(defun gen-make-advice-form (class name arglist body &key enabled)
+  (let ((lambda `(lambda ,(cond ((undefinedp arglist) nil)
+                                (t arglist))
+                   ,@body))
+        (fname  `(#:advice ,class ,name)))
+    `(make-advice ',name (si:*set-function-name ,lambda ',fname)
+                  :enabled ,enabled :arglist ',arglist)))
 
 (defun check-defadvice-arguments (function class name arglist)
   (check-type function symbol)
@@ -267,7 +269,7 @@ CAUTION: This fnuction is destructive."
     (check-defadvice-options position activate enabled)
     `(progn
        (add-advice ',function
-                   ,(gen-make-advice-form name arglist body
+                   ,(gen-make-advice-form class name arglist body
                                           :enabled enabled)
                    ,class ,position)
        ',function)))
