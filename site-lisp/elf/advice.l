@@ -213,6 +213,21 @@ CAUTION: This fnuction is destructive."
 
 ;;;; activation
 
+(defparameter *inner-thunk* nil
+  "Bound to a function contains original and inner around advices.")
+
+(defun combine-around-advices (odef arounds)
+  (let ((root (coerce `(lambda ()
+                         (setf *return-values*
+                               (multiple-value-list (apply ,odef *arguments*))))
+                      'function)))
+    `(funcall
+      ,(reduce (lambda (outer-advice inner-thunk)
+                 `(lambda ()
+                    (let ((*inner-thunk* ,inner-thunk))
+                      ,(expand-advice outer-advice))))
+               arounds :from-end t :initial-value root))))
+
 (defun make-combined-function (odef advices)
   (labels ((expand-advices (class)
              (loop for advice in (getf advices class)
@@ -221,8 +236,7 @@ CAUTION: This fnuction is destructive."
     (coerce `(lambda (&rest *arguments*)
                (let ((*return-values* nil))
                  ,@(expand-advices :before)
-                 (setf *return-values*
-                       (multiple-value-list (apply ,odef *arguments*)))
+                 ,(combine-around-advices odef (getf advices :around))
                  ,@(expand-advices :after)
                  (values-list *return-values*)))
             'function)))
