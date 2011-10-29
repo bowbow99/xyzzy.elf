@@ -262,7 +262,7 @@ CAUTION: This fnuction is destructive."
 
 (defun expand-defadvice (function class name arglist options body)
   (check-defadvice-arguments function class name arglist)
-  (destructuring-bind (&key (position :first) activate (enable t))
+  (destructuring-bind (&key (position :first) activate (enabled t))
       options
     (check-defadvice-options position activate enabled)
     `(progn
@@ -334,7 +334,7 @@ CAUTION: This fnuction is destructive."
       （Emacs では unwind-protect される、らしいんだけどイマイチどう動く
       のかイメージが掴めない）
 "
-  (expand-defadvice function class name (or arglist +undefined) options body))
+  (expand-defadvice function class name (or arglist +undefined+) options body))
 (set-indent 'defadvice 2)
 
 
