@@ -91,9 +91,15 @@ CAUTION: This fnuction is destructive."
              (format stream "Function ~S is not adviced."
                    (non-adviced-function-name x)))))
 
-(defparameter *arguments* nil)
-(defparameter *return-values* nil)
+(defparameter *arguments* nil
+  "Bound to list of arguments while executing adviced function.")
 
+(defparameter *return-values* nil
+  "Bound to list of return values while executing adviced function.
+Elements of this list will be what ultimately returned from adviced function.")
+
+(defparameter *inner-thunk* nil
+  "Bound to a function contains original and inner around advices.")
 
 
 ;;;; piece of advice
@@ -140,6 +146,15 @@ CAUTION: This fnuction is destructive."
       (list
        (cond ((undefinedp arglist) `(progn ,@def))
              (t `(destructuring-bind ,arglist ,@def)))))))
+
+
+(defun gen-make-advice-form (class name arglist body &key enabled)
+  (let ((lambda `(lambda ,(cond ((undefinedp arglist) nil)
+                                (t arglist))
+                   ,@body))
+        (fname  `(#:advice ,class ,name)))
+    `(make-advice ',name (si:*set-function-name ,lambda ',fname)
+                  :enabled ,enabled :arglist ',arglist)))
 
 
 ;;;; store advices on function
@@ -213,9 +228,6 @@ CAUTION: This fnuction is destructive."
 
 ;;;; activation
 
-(defparameter *inner-thunk* nil
-  "Bound to a function contains original and inner around advices.")
-
 (defun combine-around-advices (odef arounds)
   (let ((root (coerce `(lambda ()
                          (setf *return-values*
@@ -258,14 +270,6 @@ CAUTION: This fnuction is destructive."
 
 
 ;;;; Macro defadvice
-
-(defun gen-make-advice-form (class name arglist body &key enabled)
-  (let ((lambda `(lambda ,(cond ((undefinedp arglist) nil)
-                                (t arglist))
-                   ,@body))
-        (fname  `(#:advice ,class ,name)))
-    `(make-advice ',name (si:*set-function-name ,lambda ',fname)
-                  :enabled ,enabled :arglist ',arglist)))
 
 (defun check-defadvice-arguments (function class name arglist)
   (check-type function symbol)
