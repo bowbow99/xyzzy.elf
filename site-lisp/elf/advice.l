@@ -147,13 +147,21 @@ Elements of this list will be what ultimately returned from adviced function.")
        (cond ((undefinedp arglist) `(progn ,@def))
              (t `(destructuring-bind ,arglist ,@def)))))))
 
+
+;;;;; construct piece of advice
+;;
+;; These functions are aimed to be used on expansion of macro `defadvice`.
 
-(defun gen-make-advice-form (class name arglist body &key enabled)
+(defun gen-closure-advice-thunk-form (class name arglist body)
   (let ((lambda `(lambda ,(cond ((undefinedp arglist) nil)
                                 (t arglist))
                    ,@body))
         (fname  `(#:advice ,class ,name)))
-    `(make-advice ',name (si:*set-function-name ,lambda ',fname)
+    `(si:*set-function-name ,lambda ',fname)))
+
+(defun gen-make-advice-form (class name arglist body &key enabled)
+  (let ((thunk-form (gen-closure-advice-thunk-form class name arglist body)))
+    `(make-advice ',name ,thunk-form
                   :enabled ,enabled :arglist ',arglist)))
 
 
